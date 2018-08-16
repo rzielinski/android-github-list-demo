@@ -2,7 +2,9 @@ package com.dreddi.android.githublist.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RepoOwner {
+import java.io.Serializable;
+
+public class RepoOwner implements Serializable {
 
     @SerializedName("id")
     private long id;

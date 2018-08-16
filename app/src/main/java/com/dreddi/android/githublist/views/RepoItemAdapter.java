@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.dreddi.android.githublist.R;
 import com.dreddi.android.githublist.data.model.Repo;
+import com.dreddi.android.githublist.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,14 +119,8 @@ public class RepoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             repoName.setText(repo.getName());
             repoDescr.setText(repo.getDescription());
-
-            if (repo.getStargazersCount() > 1000) {
-                int countK = (int)(repo.getStargazersCount() / 1000);
-                repoStars.setText(itemView.getContext()
-                        .getString(R.string.view_repo_list_item_start_k, countK));
-            } else {
-                repoStars.setText(String.valueOf(repo.getStargazersCount()));
-            }
+            repoStars.setText(StringUtils.formatCount(
+                    itemView.getContext(), repo.getStargazersCount()));
 
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
