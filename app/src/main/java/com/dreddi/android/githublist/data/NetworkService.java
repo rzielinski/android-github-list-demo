@@ -24,7 +24,7 @@ public class NetworkService {
         gitHubApi = retrofit.create(GitHubApi.class);
     }
 
-    public Observable<RepoList> getAndroidTrendingRepoList(int page) {
-        return gitHubApi.getAndroidTrendingRepoList(page);
+    public Observable<RepoList> getAndroidTrendingRepoList(int page, int perPage) {
+        return gitHubApi.getAndroidTrendingRepoList(page, perPage);
     }
 }

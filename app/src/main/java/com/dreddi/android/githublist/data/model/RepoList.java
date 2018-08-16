@@ -23,7 +23,7 @@ public class RepoList {
         return incompleteResults;
     }
 
-    public List<Repo> getRepoList() {
+    public List<Repo> getRepoItemsList() {
         return repoList;
     }
 }
