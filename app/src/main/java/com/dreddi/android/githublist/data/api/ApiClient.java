@@ -21,13 +21,11 @@ public class ApiClient {
     }
 
     private static Retrofit getRetrofitClient(String url, long timeout) {
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(timeout, TimeUnit.SECONDS)
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .readTimeout(timeout, TimeUnit.SECONDS).build();
-
         return new Retrofit.Builder()
                 .baseUrl(url)
                 .client(client)

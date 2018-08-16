@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
             fm.beginTransaction()
                     .replace(R.id.activity_main_fragment_detail,
-                            RepoDetailsFragment.newInstance(null), RepoDetailsFragment.TAG)
+                            RepoDetailsFragment.newInstance(), RepoDetailsFragment.TAG)
                     .commit();
 
-            ((RepoListView)fragmentList).setAutoSelectFirst();
+            ((RepoListView)fragmentList).setAutoSelect();
         }
     }
 }

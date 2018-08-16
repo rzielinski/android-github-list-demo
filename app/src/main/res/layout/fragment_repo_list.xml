@@ -3,16 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.dreddi.android.githublist.views.RepoListRecyclerView
+        android:id="@+id/fragment_repo_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.dreddi.android.githublist.views.RepoListRecyclerView
-            android:id="@+id/fragment_repo_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
 </FrameLayout>

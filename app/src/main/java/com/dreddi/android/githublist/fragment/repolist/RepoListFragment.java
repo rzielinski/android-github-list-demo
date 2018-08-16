@@ -1,5 +1,6 @@
 package com.dreddi.android.githublist.fragment.repolist;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,9 +19,6 @@ import com.dreddi.android.githublist.views.OnRepoClickListener;
 import com.dreddi.android.githublist.views.OnRepoScrollListener;
 import com.dreddi.android.githublist.views.RepoListRecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -32,11 +30,10 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
 
     private static final int ITEMS_PER_PAGE = 10;
 
-    private int currentPage;
     private boolean isLoading;
-    private boolean isAutoSelectFirstSymbol;
+    private boolean isAutoSelect;
 
-    private List<Repo> repoItemList;
+    private RepoListViewModel viewModel;
     private RepoListRecyclerView repoListRecyclerView;
 
     private CompositeDisposable disposables = new CompositeDisposable();
@@ -48,7 +45,8 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        repoItemList = new ArrayList<>();
+        viewModel = ViewModelProviders.of(getActivity())
+                .get(RepoListViewModel.class);
     }
 
     @Nullable
@@ -58,8 +56,8 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
         updateView();
     }
 
@@ -70,8 +68,8 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
     }
 
     @Override
-    public void setAutoSelectFirst() {
-        isAutoSelectFirstSymbol = true;
+    public void setAutoSelect() {
+        isAutoSelect = true;
     }
 
     @Override
@@ -81,7 +79,7 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
 
     @Override
     public void loadMoreItems() {
-        currentPage++;
+        viewModel.addPage();
         fetchData();
     }
 
@@ -104,8 +102,10 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
     }
 
     private void updateView() {
-        if (repoItemList.size() > 0) {
-            repoListRecyclerView.addItems(repoItemList);
+        if (viewModel.getItems() != null) {
+            repoListRecyclerView.addItems(
+                    viewModel.getItems());
+            notifyAutoSelect();
         } else {
             fetchData();
         }
@@ -117,35 +117,44 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
     }
 
     private void showError() {
-        Toast.makeText(getActivity(), getString(R.string.fragment_repo_list_error), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(),
+                getString(R.string.fragment_repo_list_error),
+                Toast.LENGTH_LONG).show();
     }
 
     private void appendData(RepoList repoList) {
         if ((repoList == null) || (repoList.getRepoItemsList() == null)) {
             return;
         }
-        repoItemList.addAll(repoList.getRepoItemsList());
+        viewModel.addItems(repoList.getRepoItemsList());
         repoListRecyclerView.addItems(repoList.getRepoItemsList());
         notifyAutoSelect();
     }
 
     private void notifyAutoSelect() {
-        if (isAutoSelectFirstSymbol && (repoItemList.size() > 0)) {
-            notifyRepoSelected(repoItemList.get(0));
-            isAutoSelectFirstSymbol = false;
+        if (isAutoSelect) {
+            if (viewModel.getSelectedItem() != null) {
+                notifyRepoSelected(viewModel.getSelectedItem());
+            } else if (viewModel.getFirstItem() != null) {
+                notifyRepoSelected(viewModel.getFirstItem());
+            }
+            isAutoSelect = false;
         }
     }
 
     private void notifyRepoSelected(Repo repo) {
+        viewModel.setSelectedItem(repo);
         if (getActivity() instanceof MainActivityView) {
-            ((MainActivityView)getActivity()).showRepoDetails(repo);
+            ((MainActivityView) getActivity()).showRepoDetails(repo);
         }
     }
 
     private void fetchData() {
         setLoading(true);
         disposables.add(
-                NetworkService.getInstance().getAndroidTrendingRepoList(currentPage, ITEMS_PER_PAGE)
+                NetworkService.getInstance()
+                        .getAndroidTrendingRepoList(
+                                viewModel.getCurrentPage(), ITEMS_PER_PAGE)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Consumer<RepoList>() {

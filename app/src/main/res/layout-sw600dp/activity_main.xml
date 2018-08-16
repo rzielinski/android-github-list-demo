@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_main_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,13 +26,20 @@
 
             <FrameLayout
                 android:id="@+id/activity_main_fragment"
-                android:layout_width="@dimen/activity_main_list_width"
-                android:layout_height="match_parent" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="match_parent"
+                android:background="@color/colorFrame" />
 
             <FrameLayout
                 android:id="@+id/activity_main_fragment_detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"/>
         </LinearLayout>
 
     </LinearLayout>

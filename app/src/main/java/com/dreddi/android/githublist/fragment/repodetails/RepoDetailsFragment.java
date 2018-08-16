@@ -3,13 +3,13 @@ package com.dreddi.android.githublist.fragment.repodetails;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -24,7 +24,6 @@ public class RepoDetailsFragment extends Fragment implements RepoDetailsView {
 
     private static final String ARG_REPO = "repo";
 
-    private Repo repo;
     private TextView repoName;
     private TextView repoDescr;
     private TextView repoWatch;
@@ -32,6 +31,13 @@ public class RepoDetailsFragment extends Fragment implements RepoDetailsView {
     private TextView repoFork;
     private TextView seeMore;
     private ImageView avatar;
+    private LinearLayout layoutDetails;
+
+    private Repo repo;
+
+    public static RepoDetailsFragment newInstance() {
+        return newInstance(null);
+    }
 
     public static RepoDetailsFragment newInstance(Repo repo) {
         RepoDetailsFragment fragment = new RepoDetailsFragment();
@@ -56,8 +62,8 @@ public class RepoDetailsFragment extends Fragment implements RepoDetailsView {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
         updateView();
     }
 
@@ -83,6 +89,7 @@ public class RepoDetailsFragment extends Fragment implements RepoDetailsView {
         repoWatch = view.findViewById(R.id.fragment_repo_details_watch);
         repoStars = view.findViewById(R.id.fragment_repo_details_stars);
         repoFork = view.findViewById(R.id.fragment_repo_details_fork);
+        layoutDetails = view.findViewById(R.id.fragment_repo_details_layout);
 
         seeMore = view.findViewById(R.id.fragment_repo_details_see_more);
         seeMore.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +105,7 @@ public class RepoDetailsFragment extends Fragment implements RepoDetailsView {
     private void updateView() {
 
         if (repo == null) {
+            layoutDetails.setVisibility(View.GONE);
             return;
         }
 
@@ -113,17 +121,26 @@ public class RepoDetailsFragment extends Fragment implements RepoDetailsView {
 
         if (repo.getOwner() != null) {
             Glide.with(this)
+                    .applyDefaultRequestOptions(new RequestOptions()
+                            .error(R.drawable.ic_person))
                     .load(repo.getOwner().getAvatarUrl())
-                    .apply(RequestOptions.circleCropTransform()
-                            .placeholder(R.drawable.ic_person))
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(avatar);
+        } else {
+            Glide.with(this)
+                    .load(R.drawable.ic_person)
+                    .apply(RequestOptions.circleCropTransform())
                     .into(avatar);
         }
+
+        layoutDetails.setVisibility(View.VISIBLE);
     }
 
     private void showRepoHome() {
         if (repo == null) {
             return;
         }
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(repo.getHtmlUrl())));
+        startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse(repo.getHtmlUrl())));
     }
 }

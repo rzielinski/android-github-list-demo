@@ -13,7 +13,7 @@ public class RepoList {
     private boolean incompleteResults;
 
     @SerializedName("items")
-    private List<Repo> repoList;
+    private List<Repo> repoItems;
 
     public long getTotalCount() {
         return totalCount;
@@ -24,6 +24,6 @@ public class RepoList {
     }
 
     public List<Repo> getRepoItemsList() {
-        return repoList;
+        return repoItems;
     }
 }
