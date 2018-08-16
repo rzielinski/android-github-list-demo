@@ -154,7 +154,7 @@ public class RepoListFragment extends Fragment implements RepoListView, OnRepoCl
         disposables.add(
                 NetworkService.getInstance()
                         .getAndroidTrendingRepoList(
-                                viewModel.getCurrentPage(), ITEMS_PER_PAGE)
+                                viewModel.getCurrentPage() + 1, ITEMS_PER_PAGE)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Consumer<RepoList>() {
